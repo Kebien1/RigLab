@@ -1,0 +1,61 @@
+{% extends 'layouts/box.html' %}
+
+{% block content %}
+
+{% if onboarding %}
+<h1 class="mb-2 text-2xl sm:text-3xl text-center">Completa tu perfil</h1>
+<p class="text-center text-slate-500 dark:text-slate-400 text-sm mb-6">Personaliza cómo te verán otros miembros en el chat</p>
+{% else %}
+<h1 class="mb-2 text-2xl sm:text-3xl text-center">Editar Perfil</h1>
+<p class="text-center text-slate-500 dark:text-slate-400 text-sm mb-6">Actualiza tu información personal</p>
+{% endif %}
+
+<div class="text-center flex flex-col items-center mb-6">
+    <img id="avatar" class="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover my-2 ring-4 ring-emerald-500/20 shadow-md" src="{{ user.profile.avatar }}" alt="Avatar" />
+    <div class="text-center max-w-md">
+        <h2 id="displayname" class="text-xl font-bold text-slate-900 dark:text-white">{{ user.profile.displayname|default:"" }}</h2>
+        <div class="text-slate-400 dark:text-slate-500 text-sm">@{{ user.username }}</div>
+    </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="space-y-4 max-w-lg mx-auto">
+    {% csrf_token %}
+    <div class="space-y-3">
+        {{ form.as_p }}
+    </div>
+    
+    <div class="flex flex-col sm:flex-row items-center gap-3 pt-4">
+        <button type="submit" class="w-full sm:w-auto">Guardar cambios</button>
+        {% if onboarding %}
+        <a class="button button-gray text-center w-full sm:w-auto" href="{% url 'inicio' %}">Omitir</a>
+        {% else %}
+        <a class="button button-gray text-center w-full sm:w-auto" href="{{ request.META.HTTP_REFERER|default:'/' }}">Cancelar</a>
+        {% endif %}
+    </div>
+</form>
+
+<script>
+    // This updates the avatar preview
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) {
+        fileInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const image = document.querySelector('#avatar');
+            if (file && file.type.includes('image')) {
+                const url = URL.createObjectURL(file);
+                image.src = url;
+            }
+        });
+    }
+
+    // This updates the name preview
+    const display_nameInput = document.getElementById('id_displayname');
+    const display_nameOutput = document.getElementById('displayname');
+    if (display_nameInput && display_nameOutput) {
+        display_nameInput.addEventListener('input', (event) => {
+            display_nameOutput.innerText = event.target.value;
+        });
+    }
+</script>
+
+{% endblock %}

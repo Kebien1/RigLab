@@ -1,0 +1,65 @@
+{% extends 'layouts/box.html' %}
+
+{% block content %}
+
+<h1 class="mb-6 text-2xl sm:text-3xl">Ajustes de Cuenta</h1>
+
+<div class="overflow-x-auto">
+    <table class="w-full text-sm text-left text-slate-600 dark:text-slate-300">
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+            <tr>
+                <th scope="row" class="py-4 pr-3 text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-100">
+                    Correo electrónico
+                </th>
+                <td id="email-address" class="py-4 px-2 sm:px-6">
+                    {% if user.email %}{{ user.email }}{% else %}<span class="text-slate-400">Sin correo</span>{% endif %}
+                </td>
+                <td class="py-4 pl-2 text-right">
+                    <a id="email-edit" class="cursor-pointer font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
+                        hx-get="{% url 'profile-emailchange' %}"
+                        hx-target="#email-address"
+                        hx-swap="innerHTML" >
+                        Editar
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row" class="py-4 pr-3 font-semibold text-slate-900 dark:text-slate-100">  
+                    Estado
+                </th>
+                <td class="py-4 px-2 sm:px-6">
+                    {% if user.emailaddress_set.first.verified %}
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
+                        Verificado
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400">
+                        No verificado
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="py-4 pl-2 text-right">
+                    <a href="{% url 'profile-emailverify' %}" class="font-medium text-emerald-600 dark:text-emerald-400 hover:underline">
+                        {% if not user.emailaddress_set.first.verified %}Verificar{% endif %}
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <th scope="row" class="py-4 pr-3 text-sm sm:text-base font-semibold text-slate-900 dark:text-slate-100">
+                    Eliminar Cuenta
+                </th>
+                <td class="py-4 px-2 sm:px-6 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                    Una vez eliminada, la cuenta no se puede recuperar.
+                </td>
+                <td class="py-4 pl-2 text-right">
+                    <a href="{% url 'profile-delete' %}" class="font-medium text-red-600 dark:text-red-400 hover:underline">
+                        Eliminar
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

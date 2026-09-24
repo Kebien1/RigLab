@@ -1,0 +1,277 @@
+{% extends 'layouts/blank.html' %} {% block content %}
+
+<wrapper 
+  x-data="{ sidebarOpen: false }"
+  class="block max-w-6xl mx-auto my-3 sm:my-6 md:my-8 px-2 sm:px-4 md:px-6 w-full"
+>
+  <div class="relative flex h-[calc(100dvh-5.5rem)] sm:h-[calc(100vh-8.5rem)] min-h-[30rem] sm:min-h-[36rem] max-h-[52rem] rounded-2xl bg-white dark:bg-slate-900 shadow-xl dark:shadow-2xl dark:shadow-slate-950/40 border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors">
+    
+    <!-- Backdrop oscuro para móvil cuando el sidebar está abierto -->
+    <div 
+      x-show="sidebarOpen" 
+      x-cloak
+      @click="sidebarOpen = false"
+      x-transition:enter="transition-opacity ease-linear duration-200"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+      x-transition:leave="transition-opacity ease-linear duration-200"
+      x-transition:leave-start="opacity-100"
+      x-transition:leave-end="opacity-0"
+      class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-30 md:hidden"
+    ></div>
+
+    <!-- Sidebar / Lista de sesiones -->
+    <aside 
+      class="fixed md:static inset-y-0 left-0 z-40 w-72 sm:w-80 md:w-1/3 max-w-[85vw] flex flex-col border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/90 transition-all duration-300 transform md:transform-none"
+      :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+    >
+      <!-- Encabezado del sidebar -->
+      <div class="p-3.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col gap-2.5 sm:gap-3">
+        <div class="flex items-center justify-between gap-2">
+          <a href="{% url 'nuevo-chat' %}" class="flex-1 flex items-center justify-center gap-1.5 text-center rounded-xl bg-emerald-600 dark:bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 dark:hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Nuevo Chat
+          </a>
+          <!-- Botón cerrar en móvil -->
+          <button 
+            type="button" 
+            @click="sidebarOpen = false" 
+            class="md:hidden !p-2 !bg-slate-200 dark:!bg-slate-800 !text-slate-600 dark:!text-slate-300 rounded-xl hover:!bg-slate-300 dark:hover:!bg-slate-700 !shadow-none"
+            aria-label="Cerrar panel de chats"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <form id="form_buscar_chats" method="GET" action="{% url 'inicio' %}" class="relative">
+          <input 
+            id="input_buscar_chats"
+            type="search" 
+            name="q" 
+            value="{{ request.GET.q }}" 
+            placeholder="Buscar chats..." 
+            class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-3 pr-11 text-xs sm:text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+            hx-get="{% url 'buscar-sesiones' %}"
+            hx-trigger="input changed delay:300ms, search"
+            hx-target="#lista-sesiones"
+            hx-swap="innerHTML"
+          >
+          <button type="submit" class="!bg-transparent !p-0 absolute inset-y-0 right-1 flex items-center pr-3 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 !shadow-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </button>
+        </form>
+      </div>
+
+      <!-- Lista con scroll de conversaciones -->
+      <div id="lista-sesiones" class="flex-1 overflow-y-auto p-2 sm:p-3 space-y-1">
+        {% include 'a_rtchat/partials/lista_sesiones_p.html' %}
+      </div>
+    </aside>
+
+    <!-- Área Principal de Chat -->
+    <main id="chat_window" class="flex-1 w-full md:w-2/3 flex flex-col overflow-hidden relative bg-white dark:bg-slate-900 transition-colors">
+      
+      <!-- Barra Superior de Chat -->
+      <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-950/60 px-3.5 sm:px-5 py-2.5 sm:py-3 text-sm">
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
+          <!-- Botón abrir menú de chats en móvil -->
+          <button 
+            type="button" 
+            @click="sidebarOpen = true" 
+            class="md:hidden !p-2 !bg-slate-200/80 dark:!bg-slate-800 !text-slate-700 dark:!text-slate-300 rounded-xl hover:!bg-slate-300 dark:hover:!bg-slate-700 !shadow-none shrink-0"
+            aria-label="Ver historial de chats"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
+          </button>
+          
+          <div class="truncate">
+            <p class="mb-0 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">RAG LOCAL</p>
+            <p class="mb-0 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{ sesion_actual.titulo }}</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Documento(s) activos en esta sesión -->
+          {% for doc in documentos_sesion %}
+          <div class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 py-1 px-2.5 text-xs text-emerald-800 dark:text-emerald-300 shadow-sm" title="{{ doc.nombre_original }}">
+            <svg class="w-3.5 h-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span class="max-w-[120px] sm:max-w-[180px] truncate font-medium">{{ doc.nombre_original }}</span>
+            <a href="{% url 'eliminar-documento-chat' sesion_actual.id_sesion doc.id %}" onclick="return confirm('¿Deseas desvincular este documento de la sesión?')" class="text-slate-400 hover:text-red-500 ml-1" title="Desvincular documento">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </a>
+          </div>
+          {% endfor %}
+
+          <span class="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-medium text-emerald-700 dark:text-emerald-300 shrink-0">
+            <span class="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="online-count"></span>en línea
+          </span>
+        </div>
+      </div>
+      
+      <!-- Mensajes -->
+      <div id="chat_container" class="grow overflow-x-hidden overflow-y-auto px-3 sm:px-5 py-4 sm:py-5">
+        <ul id="chat_messages" class="flex min-h-full flex-col justify-end gap-3.5 sm:gap-5">
+          {% for mensaje in mensajes_chat reversed %} 
+            {% include 'a_rtchat/mensaje_chat.html' %}
+          {% endfor %}
+        </ul>
+      </div>
+      
+      <!-- Input y Formulario de Envío con Adjuntar Archivo -->
+      <div class="border-t border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-950/90 p-2.5 sm:p-4 transition-colors">
+          
+          <!-- Banner de procesamiento de archivo (oculto por defecto) -->
+          <div id="subiendo-banner" class="hidden mb-3 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-200 text-xs sm:text-sm flex items-center gap-3">
+            <svg class="animate-spin h-5 w-5 text-emerald-600 dark:text-emerald-400 shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            <div class="flex-1">
+              <p class="font-semibold mb-0">Analizando y leyendo documento...</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mb-0">Extrayendo texto para que la IA responda preguntas sobre él.</p>
+            </div>
+          </div>
+
+          <!-- Formulario invisible para subir documento -->
+          <form id="form_subir_archivo" method="POST" action="{% url 'subir-documento-chat' sesion_actual.id_sesion %}" enctype="multipart/form-data" class="hidden">
+            {% csrf_token %}
+            <input type="file" id="input_archivo_chat" name="archivo" accept=".pdf,.docx,.doc,.txt,.csv,.xlsx,.xls,.pptx,.ppt,.md,.epub,.html,.xml,.json" onchange="enviarArchivo(this)">
+          </form>
+
+          <form id="chat_message_form" class="flex w-full flex-col sm:flex-row sm:items-end gap-2 sm:gap-3"
+          method="post"
+          action="{% url 'chat' sesion_actual.id_sesion %}"
+          hx-post="{% url 'chat' sesion_actual.id_sesion %}"
+          hx-target="#chat_messages"
+          hx-swap="beforeend"
+          _="on htmx:afterRequest reset() me" >
+            {% csrf_token %}
+
+            <div class="flex items-center gap-3 flex-1 w-full">
+              <!-- Botón Adjuntar Archivo -->
+              <button 
+                type="button" 
+                onclick="document.getElementById('input_archivo_chat').click()" 
+                class="!h-[3rem] sm:!h-[3.25rem] !p-0 !w-11 sm:!w-12 shrink-0 !rounded-xl !bg-slate-200 dark:!bg-slate-800 hover:!bg-slate-300 dark:hover:!bg-slate-700 !text-slate-700 dark:!text-slate-300 !shadow-none border border-slate-300 dark:border-slate-700 flex items-center justify-center transition-all group"
+                title="Adjuntar documento a este chat (.pdf, .docx, .txt, .xlsx, etc.)"
+                aria-label="Adjuntar archivo"
+              >
+                <svg class="w-5 h-5 group-hover:scale-110 transition-transform text-slate-600 dark:text-slate-300 group-hover:text-emerald-600 dark:group-hover:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                </svg>
+              </button>
+
+              <div class="flex-1 w-full">
+                {{ formulario.cuerpo }}
+              </div>
+            </div>
+
+            <button id="btn-enviar" type="submit" class="!h-[3rem] sm:!h-[3.25rem] w-full sm:w-auto shrink-0 !rounded-xl !bg-emerald-600 dark:!bg-emerald-500 !px-5 !py-0 text-sm font-semibold !text-white !shadow-none transition hover:!bg-emerald-700 dark:hover:!bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900 active:scale-[0.98]">
+              Enviar
+            </button>
+          </form>
+      </div>
+    </main>
+  </div>
+</wrapper>
+{% endblock %}
+
+{% block javascript %}
+<script>
+  function toggleMenu(event, menuId) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Ocultar todos los menús
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+      if(menu.id !== menuId) menu.classList.add('hidden');
+    });
+    
+    // Alternar el clickeado
+    const menu = document.getElementById(menuId);
+    if(menu) menu.classList.toggle('hidden');
+  }
+
+  // Cerrar menús si se hace click fuera
+  document.addEventListener('click', (event) => {
+    if (!event.target.closest('.dropdown-menu') && !event.target.closest('button[onclick^="toggleMenu"]')) {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.classList.add('hidden');
+      });
+    }
+  });
+
+  function renameChat(id, currentName) {
+    const t = prompt('Nuevo nombre para el chat:', currentName);
+    if(t) {
+      document.getElementById('edit-' + id).querySelector('input[name=titulo]').value = t;
+      document.getElementById('edit-' + id).submit();
+    }
+  }
+
+  function deleteChat(id) {
+    if(confirm('¿Seguro que quieres eliminar este chat?')) {
+      document.getElementById('delete-' + id).submit();
+    }
+  }
+
+  function scrollToBottom() {
+    const container = document.getElementById('chat_container');
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }
+
+  const messageInput = document.getElementById('id_cuerpo');
+  if (messageInput) {
+    messageInput.value = '';
+    // Enviar con Enter (sin Shift) en desktop
+    messageInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey && window.innerWidth >= 640) {
+        e.preventDefault();
+        const form = document.getElementById('chat_message_form');
+        if (form && messageInput.value.trim() !== '') {
+          form.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+      }
+    });
+  }
+  scrollToBottom();
+
+  const chatForm = document.getElementById('chat_message_form');
+  const btnEnviar = document.getElementById('btn-enviar');
+
+  if (chatForm && btnEnviar) {
+    chatForm.addEventListener('htmx:beforeRequest', function() {
+      btnEnviar.disabled = true;
+      btnEnviar.classList.remove('!bg-emerald-600', 'dark:!bg-emerald-500', 'hover:!bg-emerald-700', 'dark:hover:!bg-emerald-400', 'active:scale-[0.98]');
+      btnEnviar.classList.add('!bg-slate-300', 'dark:!bg-slate-700', '!text-slate-500', 'dark:!text-slate-400', 'cursor-not-allowed');
+    });
+  }
+
+  // Reactivar el botón cuando la IA termine de responder
+  document.body.addEventListener('htmx:afterSettle', function() {
+    var thinking = document.querySelector('[id^="bot-thinking-"]');
+    if (!thinking && btnEnviar) {
+      btnEnviar.disabled = false;
+      btnEnviar.classList.remove('!bg-slate-300', 'dark:!bg-slate-700', '!text-slate-500', 'dark:!text-slate-400', 'cursor-not-allowed');
+      btnEnviar.classList.add('!bg-emerald-600', 'dark:!bg-emerald-500', 'hover:!bg-emerald-700', 'dark:hover:!bg-emerald-400', 'active:scale-[0.98]');
+    }
+  });
+
+  // Subir archivo al seleccionarlo con feedback visual amigable
+  function enviarArchivo(input) {
+    if (input.files && input.files[0]) {
+      const banner = document.getElementById('subiendo-banner');
+      if (banner) {
+        banner.classList.remove('hidden');
+      }
+      const form = document.getElementById('form_subir_archivo');
+      if (form) {
+        form.submit();
+      }
+    }
+  }
+</script>
+{% endblock %}

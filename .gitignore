@@ -1,0 +1,78 @@
+# ========================
+# Entorno Virtual
+# ========================
+env/
+venv/
+.venv/
+ENV/
+.conda/
+
+# ========================
+# Variables de Entorno
+# ========================
+.env
+envtemp
+
+# ========================
+# Python
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+
+# ========================
+# Django
+# ========================
+db.sqlite3
+db.sqlite3-journal
+*.log
+local_settings.py
+media/
+
+# ========================
+# Capturas / Screenshots
+# ========================
+capturas/
+
+# ========================
+# RAG / Knowledge Base
+# ========================
+knowledge_base/*
+!knowledge_base/.gitkeep
+knowledge_markdown/*
+!knowledge_markdown/.gitkeep
+rag_storage/
+
+# ========================
+# IDE / Editores
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ========================
+# Sistema Operativo
+# ========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ========================
+# Archivos temporales
+# ========================
+*.bak
+*.tmp
+*.temp

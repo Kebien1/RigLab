@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://unpkg.com/htmx.org/dist/htmx.js"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
+    <script>
+        // Init theme immediately to avoid FOUC
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style type="text/tailwindcss">
+        [x-cloak] { 
+            display: none !important; 
+        }
+        h1 {
+            @apply text-3xl sm:text-4xl font-bold mb-4 text-slate-900 dark:text-slate-100
+        }
+        h2 {
+            @apply text-xl sm:text-2xl font-bold mb-2 text-slate-800 dark:text-slate-200
+        }
+        p {
+            @apply mb-4 text-slate-700 dark:text-slate-300
+        }
+        .button, button, [type='submit'], [type='button'] {
+            @apply bg-emerald-600 dark:bg-emerald-500 text-white font-bold px-5 py-3 sm:px-6 sm:py-4 inline-block 
+            rounded-xl shadow-md transition-all cursor-pointer hover:bg-emerald-700 dark:hover:bg-emerald-400
+        }
+        .button:active, button:active, [type='submit']:active, [type='button']:active {
+            @apply scale-95
+        }
+        .button.alert, button.alert {
+            @apply bg-red-600 hover:bg-red-700 text-white
+        }
+        .button-red {
+            @apply !bg-red-600 hover:!bg-red-700 text-white
+        }
+        .button-gray {
+            @apply !bg-slate-200 hover:!bg-slate-300 text-slate-800 dark:!bg-slate-700 dark:hover:!bg-slate-600 dark:text-slate-100 font-semibold
+        }
+        .navitems>li>a {
+            @apply flex items-center gap-2 h-10 sm:h-12 px-3 sm:px-4 rounded-lg text-slate-700 dark:text-slate-200 hover:text-emerald-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors font-medium;
+        }
+        .hoverlist>* {
+            @apply hover:bg-slate-100 dark:hover:bg-slate-700/60 rounded-md transition duration-150;
+        }
+        .hoverlist>*>a {
+            @apply flex items-center p-2 text-slate-800 dark:text-slate-200 font-medium;
+        }
+        .highlight {
+            @apply !bg-emerald-50 dark:!bg-emerald-950/40 text-slate-900 dark:text-slate-100;
+        }
+        .allauth content a {
+            @apply underline underline-offset-2 text-emerald-700 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 font-medium
+        }
+        .allauth form[action="/accounts/signup/"] ul {
+            @apply hidden
+        }
+        .allauth form[action="/accounts/signup/"] ul.errorlist {
+            @apply block
+        }
+        .allauth .helptext {
+            @apply block mt-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400
+        }
+        label {
+            @apply block text-sm font-semibold text-slate-800 dark:text-slate-200 mb-1.5
+        }
+        input[type=file] {
+            @apply bg-transparent pl-0 text-slate-700 dark:text-slate-300
+        }
+        .textarea, textarea, input:not([type='checkbox']):not([type='radio']):not([type='submit']):not([type='button']) {
+            @apply w-full rounded-xl py-3 px-4 bg-slate-50 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition
+        }
+        .errorlist li {
+            @apply p-2 pl-4 border-l-red-500 border-l-4 border-solid mb-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 text-sm rounded-r-lg
+        }
+        label[for="id_remember"] {
+            @apply inline-block w-auto mr-2 text-slate-700 dark:text-slate-300
+        }
+        input[name="remember"] {
+            @apply w-auto rounded text-emerald-600 focus:ring-emerald-500
+        }
+        .alert-info { @apply bg-blue-500 text-white }
+        .alert-success { @apply bg-emerald-500 text-white }
+        .alert-warning { @apply bg-amber-500 text-white }
+        .alert-danger { @apply bg-red-500 text-white }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200 {% block class %}{% endblock %}">
+	
+    {% include 'includes/messages.html' %}
+
+    {% include 'includes/header.html' %}
+
+    {% block layout %}
+    {% endblock %}
+
+    {% block javascript %} {% endblock %}
+
+</body>
+</html>

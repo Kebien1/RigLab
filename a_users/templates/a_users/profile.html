@@ -1,0 +1,18 @@
+{% extends 'layouts/blank.html' %}
+
+{% block content %}
+
+<div class="max-w-lg mx-auto flex flex-col items-center pt-12 sm:pt-20 px-4">
+    <img class="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover mb-4 ring-4 ring-emerald-500/20 shadow-lg" src="{{ profile.avatar }}" alt="{{ profile.name }}" />
+    <div class="text-center">
+        <h1 class="text-2xl sm:text-3xl">{{ profile.name }}</h1>
+        <div class="text-slate-500 dark:text-slate-400 mb-4 -mt-2 text-sm sm:text-base">@{{ profile.user.username }}</div>
+        {% if profile.info %}
+        <div class="mt-6 p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed max-w-md shadow-sm">
+            {{ profile.info|linebreaksbr }}
+        </div>
+        {% endif %}  
+    </div>
+</div>
+
+{% endblock %}
