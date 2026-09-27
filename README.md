@@ -33,21 +33,35 @@ git clone https://github.com/Kebien1/RigLab.git
 cd RigLab
 ```
 
-Crea y activa un entorno virtual (recomendado):
+Crea y activa un entorno virtual (recomendado). A continuación se muestran los comandos según tu sistema operativo:
+
+**Para Linux / macOS:**
 ```bash
 python3 -m venv env
 source env/bin/activate
 ```
-*(Nota: Si usas Windows, el comando de activación es `env\Scripts\activate`)*
 
-Instala los paquetes necesarios:
+**Para Windows:**
+*(Nota: Se recomienda usar una versión estable como Python 3.12 para evitar conflictos con librerías de IA como `onnxruntime`).*
+```powershell
+py -3.12 -m venv env
+env\Scripts\activate
+```
+
+Instala los paquetes necesarios (el archivo ya está configurado para soportar ambos sistemas):
 ```bash
 pip install -r requirements.txt
 ```
 
 Crea tu archivo de variables de entorno copiando la plantilla:
+
+**Para Linux / macOS / PowerShell:**
 ```bash
 cp .env.example .env
+```
+**Para CMD (Windows):**
+```cmd
+copy .env.example .env
 ```
 
 ### 3. Base de datos
