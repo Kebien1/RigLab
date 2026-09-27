@@ -17,7 +17,6 @@ Sigue estos pasos para levantar el entorno de manera rápida y sencilla.
 ### 1. Requisitos previos
 
 - **Python 3.11** o superior.
-- **Google Chrome** instalado (necesario para la automatización web con Selenium).
 - **Ollama** instalado y corriendo en tu computadora. Puedes descargarlo en [ollama.com](https://ollama.com/download).
 
 Una vez instalado Ollama, debes descargar los modelos que usa la aplicación ejecutando estos comandos en tu terminal:
