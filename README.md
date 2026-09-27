@@ -58,7 +58,7 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
-### 4. ¡A jugar!
+### 4. Inicio el Local
 
 Inicia el servidor local de Django:
 ```bash
