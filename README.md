@@ -2,7 +2,7 @@
     <h2 align="center">RigLab (RAG Local Chat)</h2>
 </div>
 
-## 📌 Acerca de este repositorio
+##  Acerca de este repositorio
 
 Este repositorio contiene el proyecto **RigLab**, una aplicación de chat local desarrollado en Django que aplica técnicas de RAG (Retrieval-Augmented Generation). 
 
@@ -10,7 +10,7 @@ El propósito es responder preguntas basándose en documentos locales, utilizand
 
 ---
 
-## 🚀 Cómo ejecutar el proyecto
+##  Cómo ejecutar el proyecto
 
 Sigue estos pasos para levantar el entorno de manera rápida y sencilla.
 
@@ -71,7 +71,7 @@ Para alimentar la inteligencia de la aplicación, puedes colocar tus documentos 
 
 ---
 
-## 🏆 Créditos y Agradecimientos
+##  Créditos y Agradecimientos
 
 Este proyecto es únicamente una modificación para fines académicos. Todo el crédito arquitectónico y conceptual pertenece a los autores originales:
 
