@@ -1,0 +1,51 @@
+{% extends 'layouts/blank.html' %}
+{% block content %}
+
+<div class="max-w-xl mx-auto my-12 px-4 sm:px-6">
+  
+  <div class="bg-white dark:bg-slate-900 border border-rose-200/80 dark:border-rose-900/60 rounded-2xl shadow-xs p-6 sm:p-8">
+    
+    <div class="flex items-center gap-3.5 mb-5">
+      <div class="p-2.5 bg-rose-50 dark:bg-rose-950/60 rounded-xl text-rose-600 dark:text-rose-400 border border-rose-200/60 dark:border-rose-900/50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+      <div>
+        <div class="text-[11px] font-mono uppercase text-rose-600 dark:text-rose-400 font-semibold tracking-wider">RF-04: Eliminación Lógica</div>
+        <h1 class="text-xl font-bold text-slate-900 dark:text-slate-100 font-sans tracking-tight">Confirmar Baja de Componente</h1>
+      </div>
+    </div>
+
+    <p class="text-sm text-slate-600 dark:text-slate-300 mb-6 font-sans leading-relaxed">
+      De acuerdo con las políticas del sistema, los registros <strong>no serán eliminados físicamente</strong> de SQLite. El componente se marcará con estado inactivo (<code class="font-mono text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-1.5 py-0.5 rounded">activo = False</code>) para conservar la trazabilidad y no será ofrecido por el Asistente IA.
+    </p>
+
+    <!-- Ficha del Producto a dar de baja -->
+    <div class="bg-slate-50/80 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl p-4 mb-6 font-mono text-xs space-y-1.5">
+      <div><span class="text-slate-500">SKU:</span> <strong class="text-slate-900 dark:text-slate-100">{{ producto.sku }}</strong></div>
+      <div><span class="text-slate-500">Nombre:</span> <strong class="text-slate-900 dark:text-slate-100">{{ producto.nombre }}</strong></div>
+      <div><span class="text-slate-500">Categoría:</span> {{ producto.categoria }}</div>
+      <div><span class="text-slate-500">Existencias actuales:</span> {{ producto.cantidad }} unidades</div>
+      <div><span class="text-slate-500">Precio unitario:</span> Bs {{ producto.precio }}</div>
+    </div>
+
+    <form method="POST" class="flex items-center justify-end gap-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+      {% csrf_token %}
+      <a 
+        href="{% url 'lista-productos' %}" 
+        class="text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 transition"
+      >
+        Cancelar
+      </a>
+      <button 
+        type="submit" 
+        class="!bg-rose-600 hover:!bg-rose-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl border border-rose-600 shadow-sm transition"
+      >
+        Confirmar Baja Lógica
+      </button>
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

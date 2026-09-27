@@ -19,36 +19,54 @@
   <!-- Logo y Nombre -->
   <div class="flex items-center gap-3">
     <a class="flex items-center gap-2.5 group" href="/">
-      <div class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-500 group-hover:scale-105 transition-transform">
-        <img class="h-6 w-6" src="/static/images/logo.svg" alt="Logo" />
+      <div class="p-2 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 transition-all">
+        <img class="h-5 w-5 invert dark:invert-0" src="/static/images/logo.svg" alt="Logo" />
       </div>
-      <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Venk</span>
+      <div>
+        <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">RigLab</span>
+        <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">Componentes</span>
+      </div>
     </a>
   </div>
 
   <!-- Navegación Escritorio -->
   <nav class="hidden sm:flex items-center gap-2 sm:gap-4">
     <ul class="navitems flex items-center justify-center h-full">
+      <li>
+        <a href="{% url 'inicio' %}" class="!text-slate-700 dark:!text-slate-200 hover:!text-slate-950 dark:hover:!text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">
+          Tienda
+        </a>
+      </li>
       {% if request.user.is_authenticated %}
       <li>
-        <a href="/" class="!text-slate-800 dark:!text-slate-200 hover:!text-emerald-700 dark:hover:!text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">
-          Inicio
+        <a href="{% url 'admin-chat' %}" class="!text-slate-700 dark:!text-slate-200 hover:!text-slate-950 dark:hover:!text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">
+          Asistente IA
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'lista-productos' %}" class="!text-slate-700 dark:!text-slate-200 hover:!text-slate-950 dark:hover:!text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">
+          Inventario
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'reportes-inventario' %}" class="!text-slate-700 dark:!text-slate-200 hover:!text-slate-950 dark:hover:!text-white hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">
+          Reportes
         </a>
       </li>
       <li x-data="{ dropdownOpen: false }" class="relative">
         <a
           @click="dropdownOpen = !dropdownOpen"
           @click.away="dropdownOpen = false"
-          class="cursor-pointer select-none !text-slate-800 dark:!text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium"
+          class="cursor-pointer select-none !text-slate-700 dark:!text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium"
         >
           <img
-            class="h-8 w-8 rounded-full object-cover ring-2 ring-emerald-500/30"
+            class="h-8 w-8 rounded-full object-cover ring-2 ring-indigo-300 dark:ring-indigo-700"
             src="{{ user.profile.avatar }}"
             alt="{{ user.profile.name }}"
           />
           <span class="font-semibold text-sm">{{ user.profile.name }}</span>
           <svg 
-            class="w-4 h-4 transition-transform duration-200 text-slate-700 dark:text-slate-300" 
+            class="w-4 h-4 transition-transform duration-200 text-slate-500 dark:text-slate-400" 
             :class="dropdownOpen ? 'rotate-180' : ''"
             fill="none" stroke="currentColor" viewBox="0 0 24 24"
           >
@@ -58,7 +76,7 @@
         <div
           x-show="dropdownOpen"
           x-cloak
-          class="absolute right-0 top-full mt-2 bg-white dark:bg-slate-850 dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-xl border border-slate-200 dark:border-slate-700 rounded-xl w-48 p-1.5 z-50 backdrop-blur-md"
+          class="absolute right-0 top-full mt-2 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 shadow-xl border border-slate-200 dark:border-slate-700 rounded-xl w-48 p-1.5 z-50 backdrop-blur-md"
           x-transition:enter="duration-200 ease-out"
           x-transition:enter-start="opacity-0 -translate-y-2 scale-95"
           x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -68,18 +86,18 @@
             <li><a href="{% url 'profile-edit' %}" class="px-3 py-2 rounded-lg">Editar Perfil</a></li>
             <li><a href="{% url 'profile-settings' %}" class="px-3 py-2 rounded-lg">Ajustes</a></li>
             <li class="border-t border-slate-100 dark:border-slate-700/60 my-1"></li>
-            <li><a href="{% url 'account_logout' %}" class="px-3 py-2 rounded-lg text-red-600 dark:text-red-400 hover:!bg-red-50 dark:hover:!bg-red-950/40">Cerrar sesión</a></li>
+            <li><a href="{% url 'account_logout' %}" class="px-3 py-2 rounded-lg text-rose-600 dark:text-rose-400 hover:!bg-rose-50 dark:hover:!bg-rose-950/40">Cerrar sesión</a></li>
           </ul>
         </div>
       </li>
       {% else %}
       <li>
-        <a href="{% url 'account_login' %}" class="!text-slate-800 dark:!text-slate-200 hover:!text-emerald-700 dark:hover:!text-white font-medium">
+        <a href="{% url 'account_login' %}" class="!text-slate-700 dark:!text-slate-200 hover:!text-indigo-600 dark:hover:!text-indigo-400 font-medium">
           Iniciar sesión
         </a>
       </li>
       <li>
-        <a href="{% url 'account_signup' %}?next={% url 'profile-onboarding' %}" class="!bg-emerald-600 dark:!bg-emerald-500 !text-white rounded-xl px-4 py-2 hover:!bg-emerald-700 dark:hover:!bg-emerald-400 font-semibold shadow-sm">
+        <a href="{% url 'account_signup' %}?next={% url 'profile-onboarding' %}" class="!bg-indigo-600 hover:!bg-indigo-700 dark:!bg-indigo-500 dark:hover:!bg-indigo-600 !text-white rounded-xl px-4 py-2 font-semibold shadow-sm text-sm">
           Registrarse
         </a>
       </li>
@@ -90,7 +108,7 @@
     <button 
       type="button" 
       @click="toggleTheme()" 
-      class="!p-2.5 !bg-slate-100 dark:!bg-slate-800 hover:!bg-slate-200 dark:hover:!bg-slate-700 !text-slate-600 dark:!text-slate-300 rounded-xl transition-all !shadow-none border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+      class="!p-2.5 !bg-slate-100 dark:!bg-slate-800 hover:!bg-slate-200 dark:hover:!bg-slate-700 !text-slate-600 dark:!text-slate-300 rounded-xl transition-all !shadow-none border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400"
       :title="darkMode ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
       aria-label="Alternar modo claro y oscuro"
     >
@@ -151,21 +169,23 @@
     <div class="flex flex-col gap-2">
       {% if request.user.is_authenticated %}
       <div class="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl mb-2">
-        <img class="h-10 w-10 rounded-full object-cover ring-2 ring-emerald-500/40" src="{{ user.profile.avatar }}" alt="{{ user.profile.name }}" />
+        <img class="h-10 w-10 rounded-full object-cover ring-2 ring-slate-400/40" src="{{ user.profile.avatar }}" alt="{{ user.profile.name }}" />
         <div class="overflow-hidden">
           <div class="font-semibold text-slate-900 dark:text-white truncate">{{ user.profile.name }}</div>
           <div class="text-xs text-slate-500 dark:text-slate-400 truncate">@{{ user.username }}</div>
         </div>
       </div>
-      <a href="/" class="px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Inicio</a>
+      <a href="{% url 'inicio' %}" class="px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Asistente IA</a>
+      <a href="{% url 'lista-productos' %}" class="px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Inventario de Componentes</a>
+      <a href="{% url 'reportes-inventario' %}" class="px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Reportes</a>
       <a href="{% url 'profile' %}" class="px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Mi perfil</a>
       <a href="{% url 'profile-edit' %}" class="px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Editar Perfil</a>
       <a href="{% url 'profile-settings' %}" class="px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Ajustes</a>
       <div class="border-t border-slate-200 dark:border-slate-800 my-1"></div>
-      <a href="{% url 'account_logout' %}" class="px-4 py-2.5 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 font-medium">Cerrar sesión</a>
+      <a href="{% url 'account_logout' %}" class="px-4 py-2.5 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Cerrar sesión</a>
       {% else %}
       <a href="{% url 'account_login' %}" class="px-4 py-2.5 rounded-lg text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Iniciar sesión</a>
-      <a href="{% url 'account_signup' %}?next={% url 'profile-onboarding' %}" class="block text-center bg-emerald-600 dark:bg-emerald-500 text-white px-4 py-2.5 rounded-xl font-semibold hover:bg-emerald-700 shadow-sm">Registrarse</a>
+      <a href="{% url 'account_signup' %}?next={% url 'profile-onboarding' %}" class="block text-center bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 px-4 py-2.5 rounded-xl font-semibold hover:bg-slate-700 shadow-sm">Registrarse</a>
       {% endif %}
     </div>
   </div>

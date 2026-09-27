@@ -28,7 +28,7 @@
       <!-- Encabezado del sidebar -->
       <div class="p-3.5 sm:p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col gap-2.5 sm:gap-3">
         <div class="flex items-center justify-between gap-2">
-          <a href="{% url 'nuevo-chat' %}" class="flex-1 flex items-center justify-center gap-1.5 text-center rounded-xl bg-emerald-600 dark:bg-emerald-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 dark:hover:bg-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition-all">
+          <a href="{% url 'nuevo-chat' %}" class="flex-1 flex items-center justify-center gap-1.5 text-center rounded-xl bg-indigo-600 dark:bg-indigo-500 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
             Nuevo Chat
           </a>
@@ -50,7 +50,7 @@
             name="q" 
             value="{{ request.GET.q }}" 
             placeholder="Buscar chats..." 
-            class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-3 pr-11 text-xs sm:text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+            class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl py-2 pl-3 pr-11 text-xs sm:text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-500 transition"
             hx-get="{% url 'buscar-sesiones' %}"
             hx-trigger="input changed delay:300ms, search"
             hx-target="#lista-sesiones"
@@ -85,16 +85,16 @@
           </button>
           
           <div class="truncate">
-            <p class="mb-0 text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">RAG LOCAL</p>
-            <p class="mb-0 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{{ sesion_actual.titulo }}</p>
+            <p class="mb-0 text-[10px] sm:text-xs font-mono font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">IA LOCAL: QWEN2.5:1.5B (OLLAMA)</p>
+            <p class="mb-0 text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">Asistente de Hardware e Inventario</p>
           </div>
         </div>
 
         <div class="flex items-center gap-2">
           <!-- Documento(s) activos en esta sesión -->
           {% for doc in documentos_sesion %}
-          <div class="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 py-1 px-2.5 text-xs text-emerald-800 dark:text-emerald-300 shadow-sm" title="{{ doc.nombre_original }}">
-            <svg class="w-3.5 h-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <div class="inline-flex items-center gap-1.5 rounded-xl border border-indigo-500/20 bg-indigo-50 dark:bg-indigo-950/40 py-1 px-2.5 text-xs text-indigo-800 dark:text-indigo-300 shadow-sm" title="{{ doc.nombre_original }}">
+            <svg class="w-3.5 h-3.5 shrink-0 text-indigo-600 dark:text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
             <span class="max-w-[120px] sm:max-w-[180px] truncate font-medium">{{ doc.nombre_original }}</span>
             <a href="{% url 'eliminar-documento-chat' sesion_actual.id_sesion doc.id %}" onclick="return confirm('¿Deseas desvincular este documento de la sesión?')" class="text-slate-400 hover:text-red-500 ml-1" title="Desvincular documento">
               <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -102,9 +102,8 @@
           </div>
           {% endfor %}
 
-          <span class="inline-flex items-center gap-1.5 sm:gap-2 rounded-full border border-emerald-500/20 bg-emerald-50 dark:bg-emerald-500/10 px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-medium text-emerald-700 dark:text-emerald-300 shrink-0">
-            <span class="h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span id="online-count"></span>en línea
+          <span class="inline-flex items-center text-xs font-medium text-slate-500 dark:text-slate-400 shrink-0">
+            <span id="online-count"></span> en línea
           </span>
         </div>
       </div>

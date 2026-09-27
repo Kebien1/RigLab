@@ -1,0 +1,277 @@
+{% extends 'layouts/blank.html' %}
+{% block content %}
+
+<div class="max-w-7xl mx-auto my-6 px-4 sm:px-6 lg:px-8">
+
+  <!-- Encabezado de Sección Estilo Académico -->
+  <div
+    class="flex flex-col md:flex-row md:items-center md:justify-between pb-6 mb-6 border-b border-slate-300 dark:border-slate-700">
+    <div>
+      <div class="text-xs font-mono uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1">Módulo de
+        Administración</div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50 font-serif">Inventario de Productos
+      </h1>
+    </div>
+    <div class="mt-4 md:mt-0 flex flex-wrap items-center gap-2">
+      <a href="{% url 'crear-producto' %}"
+        class="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-100 dark:hover:bg-white dark:text-slate-900 text-sm font-semibold px-4 py-2.5 rounded-lg border border-slate-900 dark:border-slate-100 shadow-sm transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        Registrar Componente
+      </a>
+      <a href="{% url 'reportes-inventario' %}"
+        class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-800 dark:bg-slate-900 dark:hover:bg-slate-800 dark:text-slate-200 text-sm font-semibold px-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-700 shadow-sm transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        Reportes Predefinidos
+      </a>
+    </div>
+  </div>
+
+  <!-- Indicadores Clave / Panel Superior con diseño sólido y limpio -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl">
+      <div class="text-[11px] uppercase font-mono tracking-wider text-slate-500 dark:text-slate-400 font-semibold">Total Componentes Activos</div>
+      <div class="text-3xl font-extrabold font-mono text-slate-900 dark:text-slate-100 mt-1.5">{{ total_registrados }}</div>
+      <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Disponibles en catálogo y consultas IA</div>
+    </div>
+    
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl">
+      <div class="text-[11px] uppercase font-mono tracking-wider text-slate-600 dark:text-slate-400 font-semibold">En Alerta de Stock Mínimo</div>
+      <div class="text-3xl font-extrabold font-mono text-slate-900 dark:text-slate-100 mt-1.5">{{ bajo_stock_count }}</div>
+      <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Existencia &le; Stock mínimo permitido</div>
+    </div>
+
+    <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 rounded-xl">
+      <div class="text-[11px] uppercase font-mono tracking-wider text-slate-600 dark:text-slate-400 font-semibold">Componentes Agotados</div>
+      <div class="text-3xl font-extrabold font-mono text-slate-900 dark:text-slate-100 mt-1.5">{{ agotados_count }}</div>
+      <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">Existencia = 0 unidades</div>
+    </div>
+  </div>
+
+  <!-- Barra de Filtros y Búsqueda (RF-02) -->
+  <div class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 p-4 rounded-lg mb-6 shadow-sm">
+    <form method="GET" action="{% url 'lista-productos' %}"
+      class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
+
+      <!-- Búsqueda por texto (SKU, Nombre, Categoría) -->
+      <div class="relative flex-1">
+        <input type="search" name="q" value="{{ query }}" placeholder="Buscar por SKU, Nombre o Categoría..."
+          class="w-full text-sm bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-800 dark:focus:ring-slate-300 transition">
+      </div>
+
+      <!-- Filtro Categoría -->
+      <div class="w-full md:w-56">
+        <select name="categoria"
+          class="w-full text-sm bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2.5 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-800 dark:focus:ring-slate-300 transition">
+          <option value="">-- Todas las Categorías --</option>
+          {% for val, label in categorias %}
+          <option value="{{ val }}" {% if categoria_filtro == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Filtro Estado Lógico -->
+      <div class="w-full md:w-48">
+        <select name="estado_filtro"
+          class="w-full text-sm bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-lg px-3 py-2.5 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-800 dark:focus:ring-slate-300 transition">
+          <option value="activos" {% if estado_filtro == 'activos' %}selected{% endif %}>Solo Activos</option>
+          <option value="inactivos" {% if estado_filtro == 'inactivos' %}selected{% endif %}>Bajas Lógicas (Inactivos)
+          </option>
+          <option value="todos" {% if estado_filtro == 'todos' %}selected{% endif %}>Todos (Historial)</option>
+        </select>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button type="submit"
+          class="inline-flex items-center justify-center bg-slate-800 hover:bg-slate-700 text-white dark:bg-slate-200 dark:hover:bg-slate-100 dark:text-slate-900 text-sm font-semibold px-4 py-2.5 rounded-lg border border-slate-800 dark:border-slate-200 transition cursor-pointer">
+          Filtrar
+        </button>
+        {% if query or categoria_filtro or estado_filtro != 'activos' %}
+        <a href="{% url 'lista-productos' %}"
+          class="text-xs text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 underline font-mono px-2 py-2">
+          Limpiar
+        </a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <!-- TABLA DE DATOS PRINCIPAL: Enfoque académico de alto contraste -->
+  <div
+    class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 rounded-lg shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse text-sm">
+        <thead>
+          <tr
+            class="bg-slate-100 dark:bg-slate-950 border-b border-slate-300 dark:border-slate-800 text-xs font-mono uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            <th class="py-3.5 px-4 font-semibold">SKU / Código</th>
+            <th class="py-3.5 px-4 font-semibold">Componente</th>
+            <th class="py-3.5 px-4 font-semibold">Categoría</th>
+            <th class="py-3.5 px-4 font-semibold text-right">Precio Unitario</th>
+            <th class="py-3.5 px-4 font-semibold text-center">Existencia</th>
+            <th class="py-3.5 px-4 font-semibold text-center">Stock Mínimo</th>
+            <th class="py-3.5 px-4 font-semibold text-center">Estado</th>
+            <th class="py-3.5 px-4 font-semibold text-center">Eliminación Lógica</th>
+            <th class="py-3.5 px-4 font-semibold text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-800 font-sans">
+          {% for p in productos %}
+          <tr
+            class="hover:bg-slate-100/70 dark:hover:bg-slate-800/60 transition-colors {% if not p.activo %}opacity-60 bg-slate-50/50 dark:bg-slate-950/40{% endif %}">
+
+            <!-- SKU -->
+            <td class="py-3.5 px-4 font-mono font-bold text-xs text-slate-900 dark:text-slate-100 whitespace-nowrap">
+              {{ p.sku }}
+            </td>
+
+            <!-- Nombre y descripción corta -->
+            <td class="py-3.5 px-4">
+              <div class="font-semibold text-slate-900 dark:text-slate-100">{{ p.nombre }}</div>
+              <div class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5" title="{{ p.descripcion }}">
+                {{ p.descripcion }}
+              </div>
+            </td>
+
+            <!-- Categoría -->
+            <td class="py-3.5 px-4 whitespace-nowrap">
+              <span
+                class="inline-block px-2 py-0.5 text-xs font-medium rounded border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300">
+                {{ p.categoria }}
+              </span>
+            </td>
+
+            <!-- Precio -->
+            <td
+              class="py-3.5 px-4 text-right font-mono font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
+              Bs {{ p.precio }}
+            </td>
+
+            <!-- Existencia con indicador -->
+            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+              {% if p.cantidad == 0 %}
+              <span
+                class="inline-block px-2.5 py-0.5 text-xs font-mono font-semibold text-rose-700 bg-rose-50 dark:text-rose-300 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-900/60 rounded-md">
+                0 (Agotado)
+              </span>
+              {% elif p.bajo_stock %}
+              <span
+                class="inline-block px-2.5 py-0.5 text-xs font-mono font-semibold text-amber-700 bg-amber-50 dark:text-amber-300 dark:bg-amber-950/50 border border-amber-200/80 dark:border-amber-900/60 rounded-md">
+                {{ p.cantidad }} (Bajo)
+              </span>
+              {% else %}
+              <span class="font-mono font-semibold text-slate-800 dark:text-slate-100">
+                {{ p.cantidad }}
+              </span>
+              {% endif %}
+            </td>
+
+            <!-- Stock Mínimo -->
+            <td class="py-3.5 px-4 text-center font-mono text-slate-500 dark:text-slate-400 whitespace-nowrap">
+              {{ p.stock_minimo }}
+            </td>
+
+            <!-- Estado de condición -->
+            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+              {% if p.estado == 'Nuevo' %}
+                <span class="text-xs font-mono text-sky-700 bg-sky-50 dark:text-sky-300 dark:bg-sky-950/50 px-2 py-0.5 rounded border border-sky-200/60 dark:border-sky-900/60">
+                  {{ p.estado }}
+                </span>
+              {% else %}
+                <span class="text-xs font-mono text-amber-700 bg-amber-50 dark:text-amber-300 dark:bg-amber-950/50 px-2 py-0.5 rounded border border-amber-200/60 dark:border-amber-900/60">
+                  {{ p.estado }}
+                </span>
+              {% endif %}
+            </td>
+
+            <!-- Estado Activo / Eliminación Lógica -->
+            <td class="py-3.5 px-4 text-center whitespace-nowrap">
+              {% if p.activo %}
+              <span
+                class="inline-block text-xs font-mono font-medium text-emerald-800 bg-emerald-100 dark:text-emerald-300 dark:bg-emerald-950 px-2.5 py-0.5 rounded border border-emerald-300 dark:border-emerald-800">
+                Activo
+              </span>
+              {% else %}
+              <span
+                class="inline-block text-xs font-mono font-medium text-slate-600 bg-slate-100 dark:text-slate-400 dark:bg-slate-800 px-2.5 py-0.5 rounded border border-slate-300 dark:border-slate-700">
+                Inactivo (Baja)
+              </span>
+              {% endif %}
+            </td>
+
+            <!-- Acciones CRUD y Ajuste de Stock -->
+            <td class="py-3.5 px-4 text-right whitespace-nowrap">
+              <div class="inline-flex items-center gap-1.5">
+
+                <!-- Ajustar Stock (RF-05) -->
+                {% if p.activo %}
+                <a href="{% url 'ajustar-stock' p.pk %}" title="Control de existencias (+/-)"
+                  class="p-1.5 text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 rounded-lg border border-indigo-200/60 dark:border-indigo-900/50 transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                  </svg>
+                </a>
+
+                <!-- Editar (RF-03) -->
+                <a href="{% url 'editar-producto' p.pk %}" title="Modificar componente"
+                  class="p-1.5 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-lg border border-slate-200 dark:border-slate-700 transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                </a>
+
+                <!-- Eliminación Lógica (RF-04) - Color rosa pastel sutil, no agresivo -->
+                <a href="{% url 'eliminar-producto-logico' p.pk %}" title="Dar de baja lógica"
+                  class="p-1.5 text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-200 bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/50 rounded-lg border border-rose-200/70 dark:border-rose-900/50 transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </a>
+                {% else %}
+                <!-- Reactivar Producto dado de baja -->
+                <form method="POST" action="{% url 'reactivar-producto' p.pk %}" class="inline">
+                  {% csrf_token %}
+                  <button type="submit" title="Reactivar en inventario"
+                    class="!p-1.5 text-slate-700 dark:text-slate-300 hover:text-slate-900 !bg-slate-100 hover:!bg-slate-200 dark:!bg-slate-800 dark:hover:!bg-slate-700 rounded border border-slate-300 dark:border-slate-700 !shadow-none text-xs font-mono">
+                    Reactivar
+                  </button>
+                </form>
+                {% endif %}
+
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="py-12 text-center text-slate-500 dark:text-slate-400">
+              <div class="max-w-sm mx-auto">
+                <svg class="w-10 h-10 mx-auto text-slate-400 mb-3" fill="none" stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                <p class="font-medium text-slate-800 dark:text-slate-200">No se encontraron componentes de hardware</p>
+                <p class="text-xs text-slate-500 mt-1">Prueba cambiando los filtros de búsqueda o registra un nuevo
+                  producto.</p>
+                <a href="{% url 'crear-producto' %}"
+                  class="inline-block mt-3 text-xs font-semibold text-slate-900 dark:text-white underline">Registrar
+                  nuevo componente &rarr;</a>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

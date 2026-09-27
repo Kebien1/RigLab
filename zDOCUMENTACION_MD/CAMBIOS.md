@@ -1,8 +1,8 @@
 # 📋 CAMBIOS — Registro de Modificaciones del Proyecto
 
-> **Proyecto:** Django Chat con RAG Local  
-> **Fecha de actualización:** 20 de septiembre de 2026  
-> **Base original:** [dilancroos/django_chat](https://github.com/dilancroos/django_chat) (commit `bf57413`)
+> **Proyecto:** RigLab (Inventario y Asistente IA)  
+> **Fecha de actualización:** 26 de septiembre de 2026  
+> **Base original:** Evolución de Django Chat con RAG Local ([dilancroos/django_chat](https://github.com/dilancroos/django_chat))
 
 ---
 
@@ -339,7 +339,7 @@ pip install -r requirements.txt
 
 # 4. Configurar variables de entorno
 # Copiar el archivo de ejemplo y ajustar según sea necesario
-cp envtemp .env
+cp .env.example .env
 # Editar .env con tus valores:
 #   DJANGO_SECRET_KEY=<tu-clave-secreta>
 #   OLLAMA_BASE_URL=http://localhost:11434
@@ -366,20 +366,50 @@ python manage.py runserver 0.0.0.0:8000
 
 ### Dependencias principales (`requirements.txt`)
 
-```
-Django>=5.2,<5.3
-django-allauth>=65.0,<66.0
-django-cleanup>=9.0,<10.0
-django-htmx>=1.20,<2.0
+Generado con `pip freeze > requirements.txt`. Contiene versiones exactas de todas las dependencias.
+Dependencias principales:
 
-llama-index-core>=0.14,<0.15
-llama-index-embeddings-ollama>=0.8,<0.9
-llama-index-llms-ollama>=0.7,<0.8
-llama-index-readers-file>=0.5,<0.6
-markitdown[pdf,docx,pptx,xlsx,xls]>=0.1,<0.2
-ollama>=0.5,<1.0
-
-python-dotenv>=1.0,<2.0
 ```
+Django==5.2.17
+django-allauth==65.19.3
+django-cleanup==9.0.0
+django-htmx==1.29.0
+
+llama-index-core==0.14.24
+llama-index-embeddings-ollama==0.8.6
+llama-index-llms-ollama==0.7.4
+llama-index-readers-file==0.5.6
+markitdown==0.1.7
+ollama==0.6.2
+
+python-dotenv==1.2.3
+reportlab==5.0.1
+requests==2.34.2
+beautifulsoup4==4.15.0
+```
+
+---
+
+## 10. Evolución a RigLab (Gestión de Inventario y Tienda)
+
+El proyecto ha evolucionado de ser únicamente un chat con RAG a un sistema integral de **Gestión de Inventario de Componentes de PC**, renombrado como **RigLab**. Se han integrado las siguientes funcionalidades principales:
+
+### 10.1 Cambio de Nombre y Diseño
+- El nombre del proyecto y la interfaz cambió de "Venk / Chat App" a **RigLab**.
+- Se agregó navegación principal para acceder a **Tienda** (Pública), **Asistente IA** (Privado), **Inventario de Componentes** y **Reportes**.
+
+### 10.2 Modelo de Inventario (`Producto`)
+Se creó el modelo `Producto` en `a_rtchat/models.py` para gestionar componentes de hardware, incluyendo:
+- **Atributos:** SKU (código único), nombre, descripción, precio y categoría.
+- **Categorías:** Procesadores, Placas Base, Memoria RAM, Tarjetas Gráficas, Almacenamiento, Fuentes de Poder, Gabinetes/Chasis, Refrigeración, Monitores, Teclados, Ratones, Audio, y Otros.
+- **Control de Stock:** Cantidad actual, stock mínimo permitido, con validaciones para evitar valores negativos.
+- **Estado y Eliminación Lógica:** Estado del componente (Nuevo, Reacondicionado, Usado) y campo `activo` para eliminación lógica (RF-04).
+- **Propiedades de estado:** Métodos para detectar bajo stock (`bajo_stock`), producto agotado (`agotado`) y valor total (`valor_total_stock`).
+
+### 10.3 Nuevas Funcionalidades
+- **Inventario:** Vistas y plantillas (`a_rtchat/templates/a_rtchat/inventario/`) para listar, crear, editar y eliminar (lógicamente) productos.
+- **Tienda (Catálogo Público):** Interfaz pública (`a_rtchat/templates/a_rtchat/publico/`) para visualizar los productos activos.
+- **Reportes:** Vistas para reportes del estado del inventario, productos agotados y valoración del stock.
+- **Documentos de Sesión:** Se agregó el modelo `DocumentoSesion` para almacenar documentos asociados a sesiones de chat.
 
 ---

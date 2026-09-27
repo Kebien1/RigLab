@@ -1,0 +1,290 @@
+{% extends 'layouts/blank.html' %}
+{% block content %}
+{% load static %}
+<div class="bg-slate-50/60 dark:bg-slate-950 min-h-screen">
+  
+  <!-- Hero Section limpio y comercial para tienda de componentes -->
+  <div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 text-center">
+      
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-3 font-sans">
+        RigLab Componentes
+      </h1>
+      
+      <p class="max-w-2xl mx-auto text-sm sm:text-base text-slate-600 dark:text-slate-400 mb-8">
+        Venta y distribución de componentes de computación, hardware y repuestos. Consulta existencias o filtra por categoría.
+      </p>
+
+      <!-- Botones de Categorías Sólidos y Claros -->
+      <div class="max-w-4xl mx-auto">
+        <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+          <!-- Botón Todos -->
+          <a 
+            href="{% url 'inicio' %}" 
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors {% if not categoria_sel %}bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900{% else %}bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700{% endif %}"
+          >
+            <span>Todos</span>
+            <span class="text-xs font-mono opacity-80">({{ total_productos }})</span>
+          </a>
+
+          <!-- Botones por cada categoría -->
+          {% for cat in categorias_disponibles %}
+          <a 
+            href="{% url 'inicio' %}?categoria={{ cat.categoria|urlencode }}" 
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors {% if categoria_sel == cat.categoria %}bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900{% else %}bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700{% endif %}"
+          >
+            <span>{{ cat.categoria }}</span>
+            <span class="text-xs font-mono opacity-80">({{ cat.total }})</span>
+          </a>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Catálogo de Productos -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+
+    <!-- Indicador de filtro activo si existe -->
+    {% if categoria_sel %}
+    <div class="mb-8 flex items-center justify-between bg-indigo-50/60 dark:bg-indigo-950/30 border border-indigo-200/60 dark:border-indigo-900/50 rounded-2xl p-4">
+      <div class="flex items-center gap-2.5">
+        <div class="p-1.5 rounded-lg bg-indigo-600 text-white">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+        </div>
+        <div>
+          <span class="text-xs text-indigo-700 dark:text-indigo-400 font-medium">Filtrando por categoría:</span>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">{{ categoria_sel }}</h2>
+        </div>
+      </div>
+      <a href="{% url 'inicio' %}" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
+        <span>Mostrar todos</span> &times;
+      </a>
+    </div>
+    {% endif %}
+
+    {% regroup productos by categoria as categorias_agrupadas %}
+
+    {% for cat in categorias_agrupadas %}
+    <div class="mb-14">
+      <!-- Encabezado de categoría con acento pastel -->
+      <div class="flex items-center justify-between mb-6 pb-3 border-b border-slate-200/80 dark:border-slate-800">
+        <div class="flex items-center gap-3">
+          <div class="w-2.5 h-6 rounded-full bg-indigo-500"></div>
+          <h2 class="text-xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">{{ cat.grouper }}</h2>
+          <span class="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200/60 dark:border-slate-700/60">
+            {{ cat.list|length }} producto{{ cat.list|length|pluralize:"s" }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Cuadrícula de tarjetas de productos -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {% for producto in cat.list %}
+        <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow transition-shadow flex flex-col">
+          
+          <!-- Imagen / Icono de Componente con estilo sólido -->
+          <div class="aspect-video bg-slate-100 dark:bg-slate-800 flex items-center justify-center relative overflow-hidden border-b border-slate-200 dark:border-slate-800">
+            <div class="text-slate-400 dark:text-slate-500">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+            </div>
+            
+            <!-- Etiqueta de Categoría Sólida -->
+            <div class="absolute top-3 left-3 bg-slate-800 text-white dark:bg-slate-200 dark:text-slate-900 text-[10px] font-semibold px-2 py-0.5 rounded uppercase tracking-wider">
+              {{ producto.categoria }}
+            </div>
+
+            <!-- Condición (Nuevo / Usado) -->
+            <div class="absolute top-3 right-3">
+              <span class="text-[10px] font-medium font-mono bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded">
+                {{ producto.estado }}
+              </span>
+            </div>
+          </div>
+          
+          <!-- Contenido de la tarjeta -->
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono mb-1">
+                SKU: {{ producto.sku }}
+              </div>
+              <h3 class="font-bold text-base text-slate-900 dark:text-white leading-snug mb-2">
+                {{ producto.nombre }}
+              </h3>
+              
+              <p class="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mb-4 leading-relaxed">
+                {{ producto.descripcion }}
+              </p>
+            </div>
+            
+            <!-- Pie de la tarjeta: Precio y Stock -->
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between mt-auto">
+              <div>
+                <div class="text-[10px] uppercase font-mono tracking-wider text-slate-500 dark:text-slate-400">Precio</div>
+                <div class="text-xl font-extrabold font-mono text-slate-900 dark:text-white">
+                  Bs {{ producto.precio }}
+                </div>
+              </div>
+
+              <div class="text-right">
+                {% if producto.cantidad > 0 %}
+                  <span class="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+                    {{ producto.cantidad }} disponible{{ producto.cantidad|pluralize:"s" }}
+                  </span>
+                {% else %}
+                  <span class="text-xs font-semibold text-rose-600 dark:text-rose-400">
+                    Agotado
+                  </span>
+                {% endif %}
+              </div>
+            </div>
+
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="py-16 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8">
+      <div class="w-12 h-12 mx-auto mb-3 text-slate-400 dark:text-slate-600">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+      </div>
+      <h3 class="text-base font-bold text-slate-900 dark:text-white mb-1">No se encontraron productos</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">No hay componentes en esta categoría por el momento.</p>
+      <a href="{% url 'inicio' %}" class="inline-flex items-center px-4 py-2 rounded-lg text-xs font-semibold bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 transition">
+        Ver todos los productos
+      </a>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  <!-- Botón Flotante y Chat de IA con Alpine.js -->
+  <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end" x-data="chatWidget()">
+    
+    <!-- Ventana del Chat Asesor -->
+    <div 
+      x-show="isOpen" 
+      x-transition.opacity
+      style="display: none;"
+      class="bg-white dark:bg-slate-900 w-80 sm:w-96 h-[520px] mb-4 rounded-xl shadow-xl border border-slate-200 dark:border-slate-800 flex flex-col overflow-hidden"
+    >
+      <!-- Cabecera Asesor IA Sólida -->
+      <div class="bg-slate-900 dark:bg-slate-800 px-4 py-3.5 flex justify-between items-center text-white border-b border-slate-800 dark:border-slate-700">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-slate-800 dark:bg-slate-700 flex items-center justify-center font-bold text-xs">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <div>
+            <span class="font-bold text-sm block leading-tight">Asesor RigLab</span>
+            <span class="text-[11px] text-slate-400 block leading-none">Consultas de catálogo</span>
+          </div>
+        </div>
+        <button @click="isOpen = false" class="text-slate-400 hover:text-white !bg-transparent !shadow-none !p-1 rounded transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Área de Mensajes -->
+      <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50 dark:bg-slate-950 text-sm">
+        <template x-for="(msg, index) in messages" :key="index">
+          <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+            <div :class="msg.role === 'user' ? 'bg-slate-900 text-white dark:bg-slate-800 rounded-xl' : 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs'" class="max-w-[85%] px-4 py-2.5 text-xs sm:text-sm break-words leading-relaxed">
+              <span x-html="formatMessage(msg.content)"></span>
+            </div>
+          </div>
+        </template>
+        <div x-show="isLoading" class="flex justify-start">
+          <div class="bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 rounded-xl border border-slate-200 dark:border-slate-800 shadow-xs max-w-[85%] px-4 py-3 flex gap-1.5 items-center">
+            <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></span>
+            <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
+            <span class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+        <form @submit.prevent="sendMessage" class="flex gap-2">
+          <input 
+            x-model="inputMsg" 
+            type="text" 
+            placeholder="Escribe una pregunta sobre componentes..." 
+            class="flex-1 bg-slate-100 dark:bg-slate-800 border-none rounded-lg px-3.5 py-2 text-xs sm:text-sm text-slate-900 dark:text-white outline-none"
+            :disabled="isLoading"
+          >
+          <button type="submit" :disabled="isLoading || !inputMsg.trim()" class="!bg-slate-900 hover:!bg-slate-800 dark:!bg-slate-100 dark:hover:!bg-white dark:!text-slate-900 text-white rounded-lg !p-2.5 transition-colors disabled:opacity-50 flex-shrink-0 !shadow-none">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Botón de apertura flotante sólido -->
+    <button @click="isOpen = !isOpen" class="flex items-center justify-center w-13 h-13 !bg-slate-900 hover:!bg-slate-800 dark:!bg-slate-800 dark:hover:!bg-slate-700 text-white rounded-full shadow-lg transition-all focus:outline-none !p-0" title="Consultar Asesor">
+      <svg x-show="!isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+      <svg x-show="isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <script>
+    function chatWidget() {
+      return {
+        isOpen: false,
+        isLoading: false,
+        inputMsg: '',
+        messages: [
+          { role: 'assistant', content: '¡Hola! Soy el Asesor Experto de RigLab. ¿Buscas recomendaciones para tu ensamble o deseas consultar disponibilidad de inventario?' }
+        ],
+        formatMessage(text) {
+          let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          formatted = formatted.replace(/\n/g, '<br>');
+          return formatted;
+        },
+        async sendMessage() {
+          const msg = this.inputMsg.trim();
+          if (!msg) return;
+          
+          this.messages.push({ role: 'user', content: msg });
+          this.inputMsg = '';
+          this.isLoading = true;
+          this.scrollToBottom();
+
+          try {
+            const response = await fetch('/api/chat-cliente/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                message: msg,
+                history: this.messages.slice(0, -1)
+              })
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+              this.messages.push({ role: 'assistant', content: data.response });
+            } else {
+              this.messages.push({ role: 'assistant', content: 'Lo siento, hubo un problema al procesar tu consulta.' });
+            }
+          } catch (error) {
+            this.messages.push({ role: 'assistant', content: 'Error al comunicarse con el servidor.' });
+          } finally {
+            this.isLoading = false;
+            this.scrollToBottom();
+          }
+        },
+        scrollToBottom() {
+          setTimeout(() => {
+            const container = document.getElementById('chat-messages');
+            if(container) container.scrollTop = container.scrollHeight;
+          }, 100);
+        }
+      }
+    }
+  </script>
+
+</div>
+{% endblock %}
