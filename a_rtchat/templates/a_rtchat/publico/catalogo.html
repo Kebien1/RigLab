@@ -221,10 +221,16 @@
       </div>
     </div>
 
-    <!-- Botón de apertura flotante sólido -->
-    <button @click="isOpen = !isOpen" class="flex items-center justify-center w-13 h-13 !bg-slate-900 hover:!bg-slate-800 dark:!bg-slate-800 dark:hover:!bg-slate-700 text-white rounded-full shadow-lg transition-all focus:outline-none !p-0" title="Consultar Asesor">
-      <svg x-show="!isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+    <!-- Botón de apertura flotante -->
+    <button @click="isOpen = !isOpen" class="flex items-center justify-center gap-2 px-5 py-3.5 !bg-indigo-600 hover:!bg-indigo-700 text-white rounded-full shadow-xl shadow-indigo-500/40 transition-all hover:-translate-y-1 focus:outline-none border-2 border-white dark:border-slate-900 group" title="Consultar Asesor">
+      <!-- Icono de mensaje con animación de flotación al estar cerrado -->
+      <svg x-show="!isOpen" class="w-6 h-6 group-hover:animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+      <!-- Icono de X al estar abierto -->
       <svg x-show="isOpen" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      
+      <!-- Textos descriptivos -->
+      <span x-show="!isOpen" class="font-bold text-sm sm:text-base whitespace-nowrap">Chat IA</span>
+      <span x-show="isOpen" class="font-bold text-sm sm:text-base whitespace-nowrap">Cerrar Chat</span>
     </button>
   </div>
 
